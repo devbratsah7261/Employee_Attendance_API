@@ -397,60 +397,6 @@ def list_employees(
 
 
 
-# @app.post("/attendance/punch-in", status_code=201)
-# def punch_in(body: PunchInIn):
-#     emp = db.employees.find_one({"emp_code": body.emp_code})
-#     ts = datetime.fromtimestamp(body.punched_at / 1000) if body.punched_at else datetime.now()
-#     d = ts.date().isoformat()
-#     if db.attendance_logs.find_one({"emp_code": body.emp_code, "date": d}):
-#         raise HTTPException(409, "already punched in for this date")
-#     doc = {
-#         "emp_code": body.emp_code,
-#         "date": d,
-#         "status": body.status,
-#         "punch_in": ts,
-#         "punch_out": None,
-#         "work_hours": None,
-#         "late_minutes": compute_late_minutes(ts, emp["shift_start"]),
-#         "overtime_minutes": 0,
-#         "half_day": False,
-#         "history": [],
-#     }
-#     res = db.attendance_logs.insert_one(doc)
-#     doc["id"] = str(res.inserted_id)
-#     doc.pop("_id", None)
-#     return doc
-
-
-# @app.get("/attendance")
-# def list_attendance(
-#     emp_code: Optional[str] = None,
-#     date_from: Optional[str] = None,
-#     date_to: Optional[str] = None,
-#     status: Optional[str] = None,
-#     page: int = 1,
-#     page_size: int = 20,
-# ):
-#     q = {}
-#     if emp_code:
-#         q["emp_code"] = emp_code
-#     if date_from or date_to:
-#         q["date"] = {}
-#         if date_from:
-#             q["date"]["$gte"] = date_from
-#         if date_to:
-#             q["date"]["$lte"] = date_to
-#     if status:
-#         q["status"] = status
-#     docs = list(db.attendance_logs.find(q))
-#     docs.sort(key=lambda d: d["date"], reverse=True)
-#     total = len(docs)
-#     page_docs = docs[(page - 1) * page_size : page * page_size]
-#     for d in page_docs:
-#         d["id"] = str(d.pop("_id"))
-#     return {"items": page_docs, "total": total, "page": page, "page_size": page_size}
-
-
 @app.get("/attendance")
 def list_attendance(
     emp_code: Optional[str] = None,
